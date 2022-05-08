@@ -1,11 +1,12 @@
 plugins {
     id 'org.springframework.boot' version '2.6.6'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'com.google.cloud.tools.jib' version '3.2.0'
     id 'java'
 }
 
 group = 'com.rb.alwaysontheroad'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 sourceCompatibility = '11'
 
 bootRun {
@@ -32,6 +33,10 @@ ext {
     set('springCloudVersion', "2021.0.1")
     set('springBootAdminVersion', "2.6.2")
     set('mapStructVersion', '1.2.0.Final')
+
+    set('organization', 'online-shop')
+    set('githubUsername', System.getenv('GITHUB_USERNAME'))
+    set('githubToken', System.getenv('GITHUB_TOKEN'))
 }
 
 dependencyManagement {
@@ -48,4 +53,15 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-log4j2'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+}
+
+jib {
+    to {
+        image = "mamedovrb/${organization}-${rootProject.name}:${project.version}"
+        allowInsecureRegistries = true
+        auth {
+            username = "${githubUsername}"
+            password = "${githubToken}"
+        }
+    }
 }
